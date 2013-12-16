@@ -1,0 +1,77 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <link type="text/css" rel="stylesheet" href="css/bootstrap.css">
+    <link type="text/css" rel="stylesheet" href="css/style.css">
+    <meta content="text/html; charset=utf-8">
+    <title>Your personal task-manager</title>
+</head>
+<body>
+<div id="wrapper">
+    <div id="header">
+        <div class="navbar navbar-inverse">
+            <div class="navbar-collapse collapse navbar-inverse-collapse">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="add-task" id="add-task-link">Добавить задачу</a></li>
+                    <li><a href="not-ready-tasks" id="not-ready-link">Невыполненные</a></li>
+                    <li><a href="ready-tasks" id="ready-link">Выполненные</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div id="content">
+        <div id="add-task" class="center-block">
+            <form class="form-horizontal">
+                <fieldset>
+                    <legend>Добавление задачи</legend>
+                    <div class="form-group">
+                        <label for="inputTask" class="col-lg-2 control-label">Название</label>
+
+                        <div class="col-lg-10">
+                            <input type="text" class="form-control" id="inputTask" placeholder="Что нужно делать?"
+                                   value="">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputDate" class="col-lg-2 control-label">Дата</label>
+
+                        <div class="col-lg-10">
+                            <input type="text" class="form-control" id="inputDate" placeholder="Дата выполнения" value="">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="checkbox">
+                                <input type="checkbox"> Выполнена
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-10 col-lg-offset-2">
+                            <button type="submit" id="save" class="btn btn-primary">Добавить</button>
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+
+        <div id="ready-tasks" class="center-block">
+            <h3>Выполненные задачи</h3>
+            <ol id='list_ready'>
+                <li>1 задача</li>
+            </ol>
+        </div>
+
+        <div id="not-ready-tasks" class="center-block">
+            <h3>Невыполненные задачи</h3>
+            <ol id='list_not_ready'>
+                <li>2 задача</li>
+            </ol>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div id="footer">Это супер таск-менеджер!</div>
+</div>
+<script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" src="js/task-manager.js"></script>
+</body>
+</html>

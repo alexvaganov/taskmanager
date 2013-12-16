@@ -1,0 +1,55 @@
+* {margin: 0; padding: 0;}
+
+html, body { height: 100%; }
+input[type=text] {
+    width: 300px;
+}
+
+#wrapper {
+    position: relative;
+    margin: 0 auto;
+    width: 960px;
+    min-height: 100%;
+}
+#header {
+    height: auto;
+}
+#content {
+
+}
+#footer {
+    position: absolute;
+    background-color: #000;
+    height: 50px;
+    width: 100%;
+    bottom: 0;
+    color: #fff;
+    text-align: center;
+}
+#ready-tasks {
+    position: relative;
+    display: none;
+}
+#not-ready-tasks {
+    position: relative;
+    display: none;
+}
+
+.center-block { width: 600px; margin: 0 auto; }
+.clearfix {
+    clear: both;
+    height: 60px;
+}
+.error  {
+    display: block;
+    float: right;
+    width: 170px;
+    line-height: 1.2em;
+    background-color: #ff3333;
+    border-radius: 7px;
+    font-size: 12px;
+    color: #fff;
+    padding: 5px;
+}
+.form-control { display: inline; }
+.checkbox { margin-left: 120px; }
