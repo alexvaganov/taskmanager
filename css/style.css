@@ -26,9 +26,11 @@ input[type=text] {
     color: #fff;
     text-align: center;
 }
+#recently-added { display: none; color: green; }
 #ready-tasks {
     position: relative;
     display: none;
+    opacity: 0.5;
 }
 #not-ready-tasks {
     position: relative;
@@ -38,7 +40,7 @@ input[type=text] {
 .center-block { width: 600px; margin: 0 auto; }
 .clearfix {
     clear: both;
-    height: 60px;
+    height: 70px;
 }
 .error  {
     display: block;
@@ -53,3 +55,24 @@ input[type=text] {
 }
 .form-control { display: inline; }
 .checkbox { margin-left: 120px; }
+
+a { text-decoration: none !important; }
+
+a.del {
+    display: inline-block;
+    width: 35px;
+    text-align: center;
+    margin-left: -90px;
+    color: #ccc;
+    border-radius: 5px;
+}
+a.del:hover {
+    display: inline-block;
+    color: White;
+    background-color: Red;
+}
+ol, ul { display: block; font-size: 18px; }
+
+li.task { margin-left: 80px; }
+li.task .body { margin-left: 45px; }
+li.task .date { margin-left: 15px; }

@@ -13,9 +13,9 @@
         <div class="navbar navbar-inverse">
             <div class="navbar-collapse collapse navbar-inverse-collapse">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="add-task" id="add-task-link">Добавить задачу</a></li>
-                    <li><a href="not-ready-tasks" id="not-ready-link">Невыполненные</a></li>
-                    <li><a href="ready-tasks" id="ready-link">Выполненные</a></li>
+                    <li class="active"><a href="?add-task" id="add-task-link">Добавить задачу</a></li>
+                    <li><a href="?not-ready-tasks" id="not-ready-link">Невыполненные</a></li>
+                    <li><a href="?ready-tasks" id="ready-link">Выполненные</a></li>
                 </ul>
             </div>
         </div>
@@ -24,7 +24,8 @@
         <div id="add-task" class="center-block">
             <form class="form-horizontal">
                 <fieldset>
-                    <legend>Добавление задачи</legend>
+                    <h3>Добавление задачи</h3>
+                    <hr>
                     <div class="form-group">
                         <label for="inputTask" class="col-lg-2 control-label">Название</label>
 
@@ -41,30 +42,29 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <div class="checkbox">
-                                <input type="checkbox"> Выполнена
-                        </div>
-                    </div>
-                    <div class="form-group">
                         <div class="col-lg-10 col-lg-offset-2">
                             <button type="submit" id="save" class="btn btn-primary">Добавить</button>
                         </div>
                     </div>
                 </fieldset>
             </form>
+            <hr>
+            <div id="recently-added" class="center-block">
+                <h3>Недавно добавленные задачи</h3>
+                <ul id='recently-added-list'>
+                </ul>
+            </div>
         </div>
 
         <div id="ready-tasks" class="center-block">
             <h3>Выполненные задачи</h3>
-            <ol id='list_ready'>
-                <li>1 задача</li>
+            <ol id='list-ready'>
             </ol>
         </div>
 
         <div id="not-ready-tasks" class="center-block">
             <h3>Невыполненные задачи</h3>
-            <ol id='list_not_ready'>
-                <li>2 задача</li>
+            <ol id='list-not-ready'>
             </ol>
         </div>
         <div class="clearfix"></div>
