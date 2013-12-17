@@ -16,6 +16,11 @@ function setActiveMenuItem(link, hiddenBlock) {
     $(hiddenBlock).show();
 }
 
+// clear input text fields
+function clearFields() {
+    $('[type=text]').val('');
+}
+
 // update title, when change URL
 function updateTitle(title) {
     var elm = document.getElementsByTagName('title')[0];
@@ -30,12 +35,12 @@ function followLink(link) {
 
 // get page param from URL
 function parseFirstUrlParam() {
-    var pageParam = 0;
-    var $_GET = window.location.search.substring(1).split("&");
-    if ($_GET[0]) {
+   var pageParam = 0;
+   var $_GET = window.location.search.substring(1).split("&");
+      if ($_GET[0]) {
         pageParam = $_GET[0];
-    }
-    return pageParam;
+      }
+   return pageParam;
 }
 
 // load page from URL history
@@ -57,38 +62,113 @@ $(window).bind('popstate', function() {
     }
 });
 
-// add task to non-ready-list and recently-added-list
-function addTask() {
-    var taskName = $('#inputTask').val();
-    var taskDate = $('#inputDate').val();
-    var spanDate = $('<span class="date"/>').text(taskDate);
-    var spanMain = $('<span class="body"/>').text(taskName).append(spanDate);
-    var cbComplete = $('<input type="checkbox" />');
-    var delTask = $('<a href="" class="del" />').text('X');
-    var li = $('<li class="task" />').append(delTask).append(cbComplete).append(spanMain);
-
-    var recentLi = $('<li />').append(spanMain.clone());
-
-    cbComplete.on('click', function() {
-        moveTask(li, cbComplete.prop('checked'));
-    });
-    delTask.on('click', function() {
-        li.remove();
+// check for existence of local storage
+function isLocalStorageAvailable() {
+    try {
+        return 'localStorage' in window && window['localStorage'] !== null;
+    } catch (e) {
         return false;
-    });
-    recentLi.appendTo('#recently-added');
-    moveTask(li);
+    }
 }
 
+// add task to non-ready-list and recently-added-list
+function addTask(value, isComplete) {
+    var cbComplete = $('<input type="checkbox" />');
+    var delTask = $('<a href="" class="del" />').text('X');
+    var spanMain = null;
+    var li = null;
+    var taskName = null;
+    var taskDate = null;
+    var spanDate = null;
+    var recentLi = null;
+
+    if (!value) { // if new task is created
+            taskName = $('#inputTask').val();
+            taskDate = $('#inputDate').val();
+            spanDate = $('<span class="date"/>').text(taskDate);
+            spanMain = $('<span class="body"/>').text(taskName).append(spanDate);
+            li = $('<li class="task" />').append(delTask).append(cbComplete).append(spanMain); // add task pats to 'li' element
+
+        recentLi = $('<li />').append(spanMain.clone());
+        recentLi.appendTo('#recently-added');
+    } else { // data load from local storage
+           spanMain = $('<span class="body"/>').append(value);
+           li = $('<li class="task" />').append(delTask).append(cbComplete).append(spanMain);
+    }
+
+    // checkbox event
+    cbComplete.on('click', function() {
+        moveTask(li, cbComplete.prop('checked'));
+    }).prop('checked', isComplete);
+
+    // delete link event
+    delTask.on('click', function() {
+        li.remove();
+        saveLists();
+        return false;
+    });
+    moveTask(li, isComplete);
+}
+
+// move task to ready or not-ready lists
 function moveTask(li, isComplete) {
         var containner = isComplete ? '#list-ready' : '#list-not-ready';
         li.appendTo(containner);
+        saveLists();
+}
+
+// save lists to local storage
+function saveLists() {
+    var readyTasks = [],
+        notReadyTasks = [],
+        elemText;
+        $('#list-not-ready span.body').each(function(i, el) {
+            elemText = $(el).html();
+            notReadyTasks.push(elemText);
+        });
+        $('#list-ready span.body').each(function(i, el) {
+            elemText = $(el).html();
+            readyTasks.push(elemText);
+        });
+    if (isLocalStorageAvailable()) {
+        localStorage.setItem('readyTasks', JSON.stringify(readyTasks));
+        localStorage.setItem('notReadyTasks', JSON.stringify(notReadyTasks));
+    }
+}
+
+// load tasks from local storage
+function loadLists() {
+    var readyTasks = [],
+        notReadyTasks = [];
+    if (isLocalStorageAvailable()) { // if brouser has local storage
+        readyTasks = JSON.parse(localStorage.getItem('readyTasks')); // get saved ready tasks list
+        notReadyTasks = JSON.parse(localStorage.getItem('notReadyTasks')); // het saved not-ready tasks list
+        if (readyTasks.length) {
+            if (readyTasks.length) {
+                for (var i = 0; i < readyTasks.length; i++) {
+                    addTask(readyTasks[i], true); // add task to DOM
+                }
+            }
+        }
+        if (notReadyTasks.length) {
+            if (notReadyTasks.length) {
+                for (var i = 0; i < notReadyTasks.length; i++) {
+                    addTask(notReadyTasks[i], false); // add task to DOM
+                }
+            }
+        }
+    }
 }
 
 
-
-
 $(document).ready(function() {
+    loadLists();
+    $('#inputDate').datepicker({
+        format: 'dd.mm.yyyy'
+    }).on('changeDate', function(){
+        $(this).next('span').remove();
+        $(this).closest('.form-group').removeClass('has-error')
+    });
     // form validation
     var isError = false;
     $('#save').on('click', function() {  // validate form, when submit button clicked
@@ -102,6 +182,7 @@ $(document).ready(function() {
         });
         if (!isError) {
             addTask();
+            clearFields();
             $('#recently-added').show();
         }
         return false;

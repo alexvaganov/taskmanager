@@ -20,11 +20,12 @@ input[type=text] {
 #footer {
     position: absolute;
     background-color: #000;
-    height: 50px;
+    height: 40px;
     width: 100%;
     bottom: 0;
     color: #fff;
     text-align: center;
+    padding: 10px;
 }
 #recently-added { display: none; color: green; }
 #ready-tasks {
@@ -73,6 +74,15 @@ a.del:hover {
 }
 ol, ul { display: block; font-size: 18px; }
 
+span.date {
+    margin-left: 15px;
+    font-style: normal;
+    color: #f0f0f0;
+    background-color: #009933;
+    border-radius: 5px;
+}
 li.task { margin-left: 80px; }
 li.task .body { margin-left: 45px; }
-li.task .date { margin-left: 15px; }
+
+.info { float: left; }
+.copyright { float: right; }
