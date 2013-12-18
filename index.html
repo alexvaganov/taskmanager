@@ -31,15 +31,14 @@
                         <label for="inputTask" class="col-lg-2 control-label">Название</label>
 
                         <div class="col-lg-10">
-                            <input type="text" class="form-control" id="inputTask" placeholder="Что нужно делать?"
-                                   value="">
+                            <input type="text" class="form-control" id="inputTask" placeholder="Что нужно делать?">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="inputDate" class="col-lg-2 control-label">Дата</label>
 
                         <div class="col-lg-10">
-                            <input type="text" class="form-control" placeholder="Дата выполнения" id="inputDate">
+                            <input type="text" class="form-control datepicker" placeholder="Дата выполнения" id="inputDate">
                         </div>
                     </div>
                     <div class="form-group">
@@ -57,6 +56,34 @@
             </div>
         </div>
 
+        <div id="change-task" class="center-block">
+            <form class="form-horizontal">
+                <fieldset>
+                    <h3>Изменение задачи</h3>
+                    <hr>
+                    <div class="form-group">
+                        <label for="inputChangeTask" class="col-lg-2 control-label">Название</label>
+
+                        <div class="col-lg-10">
+                            <input type="text" class="form-control" id="inputChangeTask" placeholder="Что нужно делать?">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputChangeDate" class="col-lg-2 control-label">Дата</label>
+
+                        <div class="col-lg-10">
+                            <input type="text" class="form-control datepicker" placeholder="Дата выполнения" id="inputChangeDate">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-10 col-lg-offset-2">
+                            <button type="submit" id="change" class="btn btn-primary">Изменить</button>
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+        
         <div id="ready-tasks" class="center-block">
             <h3>Выполненные задачи</h3>
             <ol id='list-ready'>

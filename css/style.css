@@ -5,17 +5,16 @@ input[type=text] {
     width: 300px;
 }
 
+ol, ul { display: block; font-size: 18px; }
+
+#change-task, #ready-tasks,
+#not-ready-tasks, #recently-added { display: none; }
+
 #wrapper {
     position: relative;
     margin: 0 auto;
     width: 960px;
     min-height: 100%;
-}
-#header {
-    height: auto;
-}
-#content {
-
 }
 #footer {
     position: absolute;
@@ -27,22 +26,48 @@ input[type=text] {
     text-align: center;
     padding: 10px;
 }
-#recently-added { display: none; color: green; }
-#ready-tasks {
-    position: relative;
-    display: none;
-    opacity: 0.5;
+#recently-added { color: green; }
+#ready-tasks { opacity: 0.5; }
+
+a { text-decoration: none !important; }
+
+a.del {
+    display: inline-block;
+    width: 35px;
+    text-align: center;
+    margin-left: -125px;
+    color: #ccc;
+    border-radius: 5px;
 }
-#not-ready-tasks {
-    position: relative;
-    display: none;
+a.del:hover {
+    display: inline-block;
+    color: White;
+    background-color: Red;
+}
+a.edit {
+    display: inline-block;
+    width: 35px;
+    text-align: center;
+    margin-right: 5px;
+    color: #ccc;
+    border-radius: 5px;
+}
+a.edit:hover {
+    display: inline-block;
+    color: White;
+    background-color: #0000ff;
 }
 
 .center-block { width: 600px; margin: 0 auto; }
+
 .clearfix {
     clear: both;
     height: 70px;
 }
+.checkbox { margin-left: 120px; }
+
+.copyright { float: right; }
+
 .error  {
     display: block;
     float: right;
@@ -55,24 +80,11 @@ input[type=text] {
     padding: 5px;
 }
 .form-control { display: inline; }
-.checkbox { margin-left: 120px; }
 
-a { text-decoration: none !important; }
+.info { float: left; }
 
-a.del {
-    display: inline-block;
-    width: 35px;
-    text-align: center;
-    margin-left: -90px;
-    color: #ccc;
-    border-radius: 5px;
-}
-a.del:hover {
-    display: inline-block;
-    color: White;
-    background-color: Red;
-}
-ol, ul { display: block; font-size: 18px; }
+li.task { margin-left: 115px; }
+li.task .shell { margin-left: 45px; }
 
 span.date {
     margin-left: 15px;
@@ -81,8 +93,4 @@ span.date {
     background-color: #009933;
     border-radius: 5px;
 }
-li.task { margin-left: 80px; }
-li.task .body { margin-left: 45px; }
 
-.info { float: left; }
-.copyright { float: right; }

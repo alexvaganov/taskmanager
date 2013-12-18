@@ -6,9 +6,12 @@
  * To change this template use File | Settings | File Templates.
  */
 
-// sets the active menu item, show corresponding block
+var editableTask = null; // global variable of task, which is changing now
+
+/* Sets the active menu item, show corresponding block */
 function setActiveMenuItem(link, hiddenBlock) {
     $('#add-task').hide();
+    $('#change-task').hide();
     $('#ready-tasks').hide();
     $('#not-ready-tasks').hide();
     $(link).closest('ul').children().removeClass('active'); // remove class 'active'  from all list items
@@ -16,24 +19,24 @@ function setActiveMenuItem(link, hiddenBlock) {
     $(hiddenBlock).show();
 }
 
-// clear input text fields
+/* Clear input text fields */
 function clearFields() {
     $('[type=text]').val('');
 }
 
-// update title, when change URL
+/* Update title, when URL is changed */
 function updateTitle(title) {
     var elm = document.getElementsByTagName('title')[0];
     elm.innerHTML = title;
 }
 
-// change URL, when menu item clicked
+/* Change URL, when menu item clicked */
 function followLink(link) {
     history.pushState({title:link.innerHTML, href:link.href}, null, link.href);
     updateTitle(link.innerHTML);
 }
 
-// get page param from URL
+/* Get page param from URL */
 function parseFirstUrlParam() {
    var pageParam = 0;
    var $_GET = window.location.search.substring(1).split("&");
@@ -43,7 +46,147 @@ function parseFirstUrlParam() {
    return pageParam;
 }
 
-// load page from URL history
+
+/* Show edit form with values to change task */
+function showEditPanel(elem) {
+    var textToChange = $(elem).nextAll('.shell').children('.name').text(); // find text of span class='name' by edit link
+    var dateToChange = $(elem).nextAll('.shell').children('.date').text(); // find text of span class='date' by edit link
+
+    editableTask = $(elem).parent();
+
+    // add values and clean errors
+    $('#inputChangeTask').val(textToChange).closest('.form-group').removeClass('has-error');
+    $('#inputChangeTask').next('span').remove();
+    $('#inputChangeDate').val(dateToChange).closest('.form-group').removeClass('has-error');
+    $('#inputChangeDate').next('span').remove();
+    $('#change-task').show();
+}
+
+/* Create task with CRUD buttons */
+function addTask(value, isComplete) {
+    var spanMain, li, recentLi,
+        taskName, taskDate,
+        spanName, spanDate;
+    
+    var cbComplete = $('<input type="checkbox" />');
+    var delTask = $('<a href="" title="Удалить" class="del" />').text('X');
+    var editTask = $('<a href="" title="Редактировать" class="edit" />').text('Р');
+
+    if (!value) { // if new task is created
+        taskName = $('#inputTask').val();
+        taskDate = $('#inputDate').val();
+        spanDate = $('<span class="date"/>').text(taskDate);
+        spanName = $('<span class="name"/>').text(taskName);
+        spanMain = $('<span class="shell"/>').append(spanName).append(spanDate);
+        li = $('<li class="task" />')
+                            .append(delTask)
+                            .append(editTask)
+                            .append(cbComplete)
+                            .append(spanMain); // add task pats to 'li' element
+
+        recentLi = $('<li />').append(spanMain.clone());
+        recentLi.appendTo('#recently-added');
+    } else { // data load from local storage
+           spanMain = $('<span class="shell"/>').append(value);
+           li = $('<li class="task" />')
+                           .append(delTask)
+                           .append(editTask)
+                           .append(cbComplete)
+                           .append(spanMain);
+    }
+
+    // checkbox event
+    cbComplete.on('click', function() {
+        moveTask(li, cbComplete.prop('checked'));
+    }).prop('checked', isComplete);
+
+    // delete link event
+    delTask.on('click', function() {
+        li.remove();
+        saveLists();
+        return false;
+    });
+
+    // edit link event
+    editTask.on('click', function() {
+        showEditPanel(this);
+        return false;
+    });
+    moveTask(li, isComplete);
+}
+
+/* Move task to ready or not-ready lists */
+function moveTask(li, isComplete) {
+    var containner = isComplete ? '#list-ready' : '#list-not-ready';
+    li.appendTo(containner);
+    saveLists();
+}
+
+/* Change task in task-list */
+function changeTask() {
+    var taskName = $('#inputChangeTask').val();
+    var taskDate = $('#inputChangeDate').val();
+    var spanDate = $('<span class="date"/>').text(taskDate);
+    var spanName = $('<span class="name"/>').text(taskName);
+    var spanMain = $('<span class="shell"/>').append(spanName).append(spanDate);
+    editableTask.children('span.shell').remove();
+    editableTask.append(spanMain);
+    saveLists();
+    $('#change-task').hide();
+}
+
+/* Check for existence of local storage */
+function isLocalStorageAvailable() {
+    try {
+        return 'localStorage' in window && window['localStorage'] !== null;
+    } catch (e) {
+        return false;
+    }
+}
+
+/* Save lists to local storage */
+function saveLists() {
+    var readyTasks = [],
+        notReadyTasks = [],
+        elemText;
+
+        $('#list-not-ready span.shell').each(function(i, el) {
+            elemText = $(el).html();
+            notReadyTasks.push(elemText);
+        });
+        $('#list-ready span.shell').each(function(i, el) {
+            elemText = $(el).html();
+            readyTasks.push(elemText);
+        });
+    if (isLocalStorageAvailable()) {
+        localStorage.setItem('readyTasks', JSON.stringify(readyTasks));
+        localStorage.setItem('notReadyTasks', JSON.stringify(notReadyTasks));
+    }
+}
+
+/* Load tasks from local storage */
+function loadLists() {
+    var readyTasks = [],
+        notReadyTasks = [];
+
+    if (isLocalStorageAvailable()) { // if browser has local storage
+        readyTasks = JSON.parse(localStorage.getItem('readyTasks')); // get saved ready tasks list
+        notReadyTasks = JSON.parse(localStorage.getItem('notReadyTasks')); // het saved not-ready tasks list
+
+        if (readyTasks.length) {
+            for (var i = 0; i < readyTasks.length; i++) {
+                addTask(readyTasks[i], true); // add task to DOM
+            }
+        }
+        if (notReadyTasks.length) {
+            for (var i = 0; i < notReadyTasks.length; i++) {
+                addTask(notReadyTasks[i], false); // add task to DOM
+            }
+        }
+    }
+}
+
+/* Load page from URL history */
 $(window).bind('popstate', function() {
     var pageParam = parseFirstUrlParam();
     switch(pageParam) {
@@ -62,117 +205,21 @@ $(window).bind('popstate', function() {
     }
 });
 
-// check for existence of local storage
-function isLocalStorageAvailable() {
-    try {
-        return 'localStorage' in window && window['localStorage'] !== null;
-    } catch (e) {
-        return false;
-    }
-}
-
-// add task to non-ready-list and recently-added-list
-function addTask(value, isComplete) {
-    var cbComplete = $('<input type="checkbox" />');
-    var delTask = $('<a href="" class="del" />').text('X');
-    var spanMain = null;
-    var li = null;
-    var taskName = null;
-    var taskDate = null;
-    var spanDate = null;
-    var recentLi = null;
-
-    if (!value) { // if new task is created
-            taskName = $('#inputTask').val();
-            taskDate = $('#inputDate').val();
-            spanDate = $('<span class="date"/>').text(taskDate);
-            spanMain = $('<span class="body"/>').text(taskName).append(spanDate);
-            li = $('<li class="task" />').append(delTask).append(cbComplete).append(spanMain); // add task pats to 'li' element
-
-        recentLi = $('<li />').append(spanMain.clone());
-        recentLi.appendTo('#recently-added');
-    } else { // data load from local storage
-           spanMain = $('<span class="body"/>').append(value);
-           li = $('<li class="task" />').append(delTask).append(cbComplete).append(spanMain);
-    }
-
-    // checkbox event
-    cbComplete.on('click', function() {
-        moveTask(li, cbComplete.prop('checked'));
-    }).prop('checked', isComplete);
-
-    // delete link event
-    delTask.on('click', function() {
-        li.remove();
-        saveLists();
-        return false;
-    });
-    moveTask(li, isComplete);
-}
-
-// move task to ready or not-ready lists
-function moveTask(li, isComplete) {
-        var containner = isComplete ? '#list-ready' : '#list-not-ready';
-        li.appendTo(containner);
-        saveLists();
-}
-
-// save lists to local storage
-function saveLists() {
-    var readyTasks = [],
-        notReadyTasks = [],
-        elemText;
-        $('#list-not-ready span.body').each(function(i, el) {
-            elemText = $(el).html();
-            notReadyTasks.push(elemText);
-        });
-        $('#list-ready span.body').each(function(i, el) {
-            elemText = $(el).html();
-            readyTasks.push(elemText);
-        });
-    if (isLocalStorageAvailable()) {
-        localStorage.setItem('readyTasks', JSON.stringify(readyTasks));
-        localStorage.setItem('notReadyTasks', JSON.stringify(notReadyTasks));
-    }
-}
-
-// load tasks from local storage
-function loadLists() {
-    var readyTasks = [],
-        notReadyTasks = [];
-    if (isLocalStorageAvailable()) { // if brouser has local storage
-        readyTasks = JSON.parse(localStorage.getItem('readyTasks')); // get saved ready tasks list
-        notReadyTasks = JSON.parse(localStorage.getItem('notReadyTasks')); // het saved not-ready tasks list
-        if (readyTasks.length) {
-            if (readyTasks.length) {
-                for (var i = 0; i < readyTasks.length; i++) {
-                    addTask(readyTasks[i], true); // add task to DOM
-                }
-            }
-        }
-        if (notReadyTasks.length) {
-            if (notReadyTasks.length) {
-                for (var i = 0; i < notReadyTasks.length; i++) {
-                    addTask(notReadyTasks[i], false); // add task to DOM
-                }
-            }
-        }
-    }
-}
-
 
 $(document).ready(function() {
-    loadLists();
-    $('#inputDate').datepicker({
+    loadLists(); // load tasks from local storage
+
+    $('.datepicker').datepicker({
         format: 'dd.mm.yyyy'
     }).on('changeDate', function(){
         $(this).next('span').remove();
-        $(this).closest('.form-group').removeClass('has-error')
+        $(this).closest('.form-group').removeClass('has-error');
     });
+
     // form validation
-    var isError = false;
-    $('#save').on('click', function() {  // validate form, when submit button clicked
-        $('[type=text]').each(function() {
+    $('#save').on('click', function() {  // validate form, when save button clicked
+        var isError = false;
+        $('#add-task [type=text]').each(function() { //validate add-task form
             if (!$(this).val().length) {
                 isError = true;
                 $(this).closest('.form-group').addClass('has-error');
@@ -180,6 +227,7 @@ $(document).ready(function() {
                 $(this).after('<span class="error">Это поле обязательно для заполнения!</span>');
             }
         });
+
         if (!isError) {
             addTask();
             clearFields();
@@ -187,6 +235,25 @@ $(document).ready(function() {
         }
         return false;
     });
+
+    $('#change').on('click', function() {  // validate form, when change button clicked
+        var isError = false;
+        $('#change-task [type=text]').each(function() {
+            if (!$(this).val().length) {
+                isError = true;
+                $(this).closest('.form-group').addClass('has-error');
+                $(this).next('span').remove();
+                $(this).after('<span class="error">Это поле обязательно для заполнения!</span>');
+            }
+        });
+
+        if (!isError) {
+            changeTask();
+            clearFields();
+        }
+        return false;
+    });
+
     $('[type=text]').blur(function() { // validate field, when focus is lost
         if (!$(this).val().length) {
             $(this).closest('.form-group').addClass('has-error');
