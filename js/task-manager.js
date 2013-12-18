@@ -24,6 +24,16 @@ function clearFields() {
     $('[type=text]').val('');
 }
 
+function validateDate(value) {
+    var dateArr = value.split(".");
+    dateArr[1] -= 1;
+    var date = new Date(dateArr[2], dateArr[1], dateArr[0]);
+    if ((date.getFullYear() == dateArr[2]) && (date.getMonth() == dateArr[1]) && (date.getDate() == dateArr[0])) {
+        return true;
+    }
+    return false;
+}
+
 /* Update title, when URL is changed */
 function updateTitle(title) {
     var elm = document.getElementsByTagName('title')[0];
@@ -55,10 +65,10 @@ function showEditPanel(elem) {
     editableTask = $(elem).parent();
 
     // add values and clean errors
-    $('#inputChangeTask').val(textToChange).closest('.form-group').removeClass('has-error');
-    $('#inputChangeTask').next('span').remove();
-    $('#inputChangeDate').val(dateToChange).closest('.form-group').removeClass('has-error');
-    $('#inputChangeDate').next('span').remove();
+    $('#changeTaskName').val(textToChange).closest('.form-group').removeClass('has-error');
+    $('#changeTaskName').next('span').remove();
+    $('#changeTaskDate').val(dateToChange).closest('.form-group').removeClass('has-error');
+    $('#changeTaskDate').next('span').remove();
     $('#change-task').show();
 }
 
@@ -73,8 +83,8 @@ function addTask(value, isComplete) {
     var editTask = $('<a href="" title="Редактировать" class="edit" />').text('Р');
 
     if (!value) { // if new task is created
-        taskName = $('#inputTask').val();
-        taskDate = $('#inputDate').val();
+        taskName = $('#taskName').val();
+        taskDate = $('#taskDate').val();
         spanDate = $('<span class="date"/>').text(taskDate);
         spanName = $('<span class="name"/>').text(taskName);
         spanMain = $('<span class="shell"/>').append(spanName).append(spanDate);
@@ -87,12 +97,12 @@ function addTask(value, isComplete) {
         recentLi = $('<li />').append(spanMain.clone());
         recentLi.appendTo('#recently-added');
     } else { // data load from local storage
-           spanMain = $('<span class="shell"/>').append(value);
-           li = $('<li class="task" />')
-                           .append(delTask)
-                           .append(editTask)
-                           .append(cbComplete)
-                           .append(spanMain);
+        spanMain = $('<span class="shell"/>').append(value);
+        li = $('<li class="task" />')
+                       .append(delTask)
+                       .append(editTask)
+                       .append(cbComplete)
+                       .append(spanMain);
     }
 
     // checkbox event
@@ -124,8 +134,8 @@ function moveTask(li, isComplete) {
 
 /* Change task in task-list */
 function changeTask() {
-    var taskName = $('#inputChangeTask').val();
-    var taskDate = $('#inputChangeDate').val();
+    var taskName = $('#changeTaskName').val();
+    var taskDate = $('#changeTaskDate').val();
     var spanDate = $('<span class="date"/>').text(taskDate);
     var spanName = $('<span class="name"/>').text(taskName);
     var spanMain = $('<span class="shell"/>').append(spanName).append(spanDate);
@@ -173,12 +183,12 @@ function loadLists() {
         readyTasks = JSON.parse(localStorage.getItem('readyTasks')); // get saved ready tasks list
         notReadyTasks = JSON.parse(localStorage.getItem('notReadyTasks')); // het saved not-ready tasks list
 
-        if (readyTasks.length) {
+        if (readyTasks) {
             for (var i = 0; i < readyTasks.length; i++) {
                 addTask(readyTasks[i], true); // add task to DOM
             }
         }
-        if (notReadyTasks.length) {
+        if (notReadyTasks) {
             for (var i = 0; i < notReadyTasks.length; i++) {
                 addTask(notReadyTasks[i], false); // add task to DOM
             }
@@ -258,6 +268,14 @@ $(document).ready(function() {
         if (!$(this).val().length) {
             $(this).closest('.form-group').addClass('has-error');
             $(this).after('<span class="error">Это поле обязательно для заполнения!</span>');
+        } else {
+            if ($(this).attr('class') == 'form-control datepicker') {
+                var isDate = validateDate($(this).val());
+                if (!isDate) {
+                    $(this).closest('.form-group').addClass('has-error');
+                    $(this).after('<span class="error">Дата не существует, либо задан неверный формат!</span>');
+                }
+            }
         }
     });
     $('[type=text]').focus(function() { // clean field error, when focus is on

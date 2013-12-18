@@ -1,14 +1,21 @@
 * {margin: 0; padding: 0;}
 
 html, body { height: 100%; }
+
+body {
+    background-color: #fff;
+    font: sans-serif 300;
+    font-size: 16px;
+}
+
 input[type=text] {
     width: 300px;
 }
 
-ol, ul { display: block; font-size: 18px; }
+ol, ul { display: block; }
 
 #change-task, #ready-tasks,
-#not-ready-tasks, #recently-added { display: none; }
+#not-ready-tasks, #recently-added { display: none; position: relative; font-size: 18px; }
 
 #wrapper {
     position: relative;
@@ -83,10 +90,15 @@ a.edit:hover {
 
 .info { float: left; }
 
-li.task { margin-left: 115px; }
+li.task {
+    position: relative;
+    margin: 0 0 10px 115px;
+}
 li.task .shell { margin-left: 45px; }
 
 span.date {
+    position: absolute;
+    right: -100px;
     margin-left: 15px;
     font-style: normal;
     color: #f0f0f0;
